@@ -29,7 +29,7 @@ public class PropertyController {
     @GetMapping("/{id}")
     public ResponseEntity<Property> getPropertyById(@PathVariable Long id) {
         return propertyRepository.findById(id)
-                .map(property -> ResponseEntity.ok(property))
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -37,7 +37,7 @@ public class PropertyController {
     @PostMapping
     public ResponseEntity<Property> createProperty(@RequestBody Property property) {
         // Calculate performance score based on rent and occupancy
-        int score = calculatePerformanceScore((double) property.getRent(), (double) property.getOccupancy());
+        int score = calculatePerformanceScore(property.getRent(), property.getOccupancy());
         property.setPerformanceScore(score);
         
         Property savedProperty = propertyRepository.save(property);
@@ -55,7 +55,7 @@ public class PropertyController {
                     property.setOccupancy(propertyDetails.getOccupancy());
                     
                     // Recalculate performance score
-                    int score = calculatePerformanceScore((double) propertyDetails.getRent(), (double) propertyDetails.getOccupancy());
+                    int score = calculatePerformanceScore(propertyDetails.getRent(), propertyDetails.getOccupancy());
                     property.setPerformanceScore(score);
                     
                     Property updatedProperty = propertyRepository.save(property);
@@ -93,6 +93,7 @@ public class PropertyController {
             return ResponseEntity.ok(emptyAnalytics);
         }
         
+        // Now using primitive int, so mapToInt works perfectly!
         int totalRevenue = properties.stream()
                 .filter(p -> p.getOccupancy() == 100)
                 .mapToInt(Property::getRent)
@@ -124,9 +125,9 @@ public class PropertyController {
     }
 
     // Helper method to calculate performance score
-    private int calculatePerformanceScore(double rent, double occupancy) {
+    private int calculatePerformanceScore(int rent, int occupancy) {
         // Simple formula: base score from occupancy + bonus for high rent
-        int baseScore = (int) occupancy; // 0-100
+        int baseScore = occupancy; // 0-100
         int rentBonus = rent > 3000 ? 10 : (rent > 2500 ? 5 : 0);
         return Math.min(100, baseScore + rentBonus);
     }

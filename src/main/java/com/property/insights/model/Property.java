@@ -21,18 +21,16 @@ public class Property {
     private String address;
     
     @Column(nullable = false)
-    private Double rent;
+    private int rent;  // Changed from Double to int
     
     @Column(nullable = false)
-    private Integer occupancy;
+    private int occupancy;  // Changed from Integer to int
     
     @Column(nullable = false)
-    private Integer performanceScore;
+    private int performanceScore;  // Changed from Integer to int
     
     @Column(nullable = false)
     private String propertyType;
-    
-    private Integer bedrooms;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
